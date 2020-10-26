@@ -1,0 +1,97 @@
+<resources>
+    <string name="app_name">SmartEdge Change Wallpaper</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Edge Change Wallpaper</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="menu_home">Home</string>
+    <string name="menu_gallery">Gallery</string>
+    <string name="menu_slideshow">Slideshow</string>
+    <string name="menu_tools">Tools</string>
+    <string name="menu_share">Share</string>
+    <string name="menu_rate">Rate</string>
+    <string name="show">Show all</string>
+    <string name="loading_note">Make sure the internet is stable for the loading process to be completed</string>
+    <string name="loading">Loading wallpapers...</string>
+
+    <string name="title_activity_home">HomeActivity</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="title_activity_wallpapers">WallpapersActivity</string>
+    <string name="title_activity_album">AlbumActivity</string>
+
+    <string name="title">Edit Wallpaper</string>
+    <string name="edit_label">Edit Wallpaper</string>
+    <string name="set_wallpaper_done">Wallpaper applied for %s</string>
+
+    <string name="home_screen_option">Home screen</string>
+    <string name="lock_screen_option">Lock screen</string>
+    <string name="home_and_lock_screens_option">Home and lock</string>
+    <string name="cancel">Cancel</string>
+
+    <!-- Example settings for Notifications -->
+    <string name="pref_advance_settings_title">Advance</string>
+
+    <string name="pref_description_allow_shake_to_change">When service auto change is running, allow user get new wallpaper when shake device</string>
+
+    <string name="pref_title_allow_shake">Shake to change</string>
+    <string name="pref_title_allow_auto_change">Enable auto change</string>
+
+    <string name="pref_description_allow_auto_change">Allow device can auto change wallpaper</string>
+    <string name="pref_title_custom_frequency">Custom frequency</string>
+    <string name="not_complete_setting_time_interval">You did not complete setting custom time interval. \nGo to setting for changing</string>
+    <string name="edit">Edit</string>
+    <string name="previous_auto_change">Previous</string>
+    <string name="next_auto_change">Next</string>
+    <string name="allow_auto_change">Auto change</string>
+    <string name="positionPerTotal">%d/%d</string>
+    <string name="pref_title_mode">Auto change mode</string>
+    <string name="pref_summary_share_app">Share this app to Facebook, Instagram, Google+,...</string>
+    <string name="pref_title_share_app">Share app</string>
+    <string name="basic_features_header">Basic</string>
+    <string name="advance_features_header">Advance</string>
+
+    <string name="pref_title_sync_frequency">Auto change frequency</string>
+    <string name="pref_summary_rate_app">Rating app</string>
+    <string name="pref_title_rate_app">Rating</string>
+
+    <string-array name="pref_sync_frequency_titles">
+        <item>15 minutes</item>
+        <item>30 minutes</item>
+        <item>1 hour</item>
+        <item>3 hours</item>
+        <item>6 hours</item>
+        <item>Custom</item>
+    </string-array>
+    <string-array name="pref_sync_frequency_values">
+        <item>15</item>
+        <item>30</item>
+        <item>60</item>
+        <item>180</item>
+        <item>360</item>
+        <item>-1</item>
+    </string-array>
+    <string-array name="list_preference_entries">
+        <item>Random</item>
+        <item>Next</item>
+        <item>Previous</item>
+    </string-array>
+    <string-array name="list_preference_entry_values">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
+    <string name="pref_description_edge_mode">Allow show hint icon at edge screen to quick change wallpaper</string>
+    <string name="pref_title_edge_mode">Allow Edge mode</string>
+
+    <string name="channel_name">EdgeScreen Wallpaper Changer</string>
+    <string name="channel_description">Chanel of EdgeScreen Wallpaper Changer help to change wallpaper automatically</string>
+    <string name="noti_text_title">EdgeScreen Wallpaper Changer</string>
+    <string name="stop_auto_change">Stop</string>
+
+    <string name="favorite_empty_title">Favorite Wallpaper is empty</string>
+    <string name="favorite_empty_message">Your favorite wallpaper is empty. Please tick favorite icon at top left corner of wallpaper!</string>
+    <string name="message_download_dialog">"Need download your favorite wallpapers in this album if they are not exist. Do you want to continue?"</string>
+</resources>

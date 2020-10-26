@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "18718729056",
+    "firebase_url": "https://edgechangerwpp.firebaseio.com",
+    "project_id": "edgechangerwpp",
+    "storage_bucket": "edgechangerwpp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:18718729056:android:49e8789614f41ea43db405",
+        "android_client_info": {
+          "package_name": "com.tiendollar.edgechangewallpaper"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "18718729056-n8kscvt0oua22oiao7f7rqnc07dccli4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD0ozme4cz415tXAvID52rl4-HoQGIN2tA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "18718729056-n8kscvt0oua22oiao7f7rqnc07dccli4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

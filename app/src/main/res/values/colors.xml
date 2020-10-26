@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#008577</color>
+    <color name="colorPrimaryDark">#00574B</color>
+    <color name="colorAccent">#D81B60</color>
+    <color name="label_album">#263238</color>
+    <color name="color_label_albums">#D9CFD8DC</color>
+    <color name="color_show">#EF5350</color>
+    <color name="transparent_tv">#008577</color>
+
+    <color name="black_overlay">#BF008577</color>
+    <color name="blue">#1976D2</color>
+    <color name="orange">#FFA726</color>
+    <color name="red">#FF5722</color>
+    <color name="green">#4CAF50</color>
+    <color name="bg_circular">#607D8B</color>
+    <color name="color_orange">#F57C00</color>
+
+    <color name="color_border_btn">#CFD8DC</color>
+    <color name="gray_overlay">#BF00574B</color>
+
+    <color name="color_hint_selected">#F2607D8B</color>
+    <color name="circular_color_bg">#D9607D8B</color>
+    <color name="color_bg_overlay">#99B0BEC5</color>
+</resources>

@@ -1,0 +1,90 @@
+<!--
+  ~ Copyright 2018 The app Open Source Project
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory app:title="@string/basic_features_header">
+
+        <SwitchPreference
+            android:defaultValue="true"
+            android:icon="@drawable/ic_autorenew_black_24dp"
+            android:key="autochange_switch"
+            android:summary="@string/pref_description_allow_auto_change"
+            android:title="@string/pref_title_allow_auto_change" />
+
+        <SwitchPreference
+            android:defaultValue="false"
+            android:icon="@drawable/ic_art_track_black_24dp"
+            android:key="edge_mode"
+            android:summary="@string/pref_description_edge_mode"
+            android:title="@string/pref_title_edge_mode" />
+
+        <ListPreference
+            android:defaultValue="1"
+            android:dependency="autochange_switch"
+            android:entries="@array/list_preference_entries"
+            android:entryValues="@array/list_preference_entry_values"
+            android:icon="@drawable/ic_developer_mode_black_24dp"
+            android:key="autochange_mode"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null"
+            android:title="@string/pref_title_mode" />
+
+        <ListPreference
+            android:defaultValue="15"
+            android:dependency="autochange_switch"
+            android:entries="@array/pref_sync_frequency_titles"
+            android:entryValues="@array/pref_sync_frequency_values"
+            android:icon="@drawable/ic_timer_black_24dp"
+            android:key="autochange_frequency"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null"
+            android:title="@string/pref_title_sync_frequency" />
+
+        <Preference
+            android:dependency="autochange_frequency"
+            android:icon="@drawable/ic_mode_edit_black_24dp"
+            android:key="pref_frequency_custom"
+            android:title="@string/pref_title_custom_frequency" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="@string/advance_features_header">
+
+        <SwitchPreference
+            android:defaultValue="true"
+            android:dependency="autochange_switch"
+            android:icon="@drawable/ic_vibration_black_24dp"
+            android:key="allow_shake"
+            android:summary="@string/pref_description_allow_shake_to_change"
+            android:title="@string/pref_title_allow_shake" />
+
+        <Preference
+            android:icon="@drawable/ic_share_blue_24dp"
+            android:key="pref_share_app"
+            android:summary="@string/pref_summary_share_app"
+            android:title="@string/pref_title_share_app"/>
+
+        <Preference
+            android:icon="@drawable/ic_rate_review_yellow_24dp"
+            android:key="pref_rate_app"
+            android:summary="@string/pref_summary_rate_app"
+            android:title="@string/pref_title_rate_app"/>
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

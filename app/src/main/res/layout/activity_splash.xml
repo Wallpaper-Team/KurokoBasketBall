@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:background="@android:color/black">
+
+    <LinearLayout
+        android:id="@+id/loading_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="30dp">
+        <ProgressBar
+            android:layout_width="match_parent"
+            android:maxHeight="30dp"
+            android:minHeight="10dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/loading"
+            android:textColor="@android:color/white"
+            android:gravity="center"
+            android:layout_margin="20dp"
+            android:textStyle="bold"
+            android:textSize="16sp"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/loading_note"
+            android:textColor="@android:color/white"
+            android:gravity="center"
+            android:textStyle="italic"
+            android:textSize="13sp"/>
+    </LinearLayout>
+    <ImageView
+        android:id="@+id/refresh"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:src="@drawable/ic_refresh_black_24dp"
+        android:layout_gravity="center"
+        android:visibility="gone"/>
+</FrameLayout>
