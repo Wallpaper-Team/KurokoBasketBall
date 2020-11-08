@@ -1,34 +1,42 @@
 {
   "project_info": {
-    "project_number": "18718729056",
-    "firebase_url": "https://edgechangerwpp.firebaseio.com",
-    "project_id": "edgechangerwpp",
-    "storage_bucket": "edgechangerwpp.appspot.com"
+    "project_number": "1072414184846",
+    "firebase_url": "https://kurokobasketball-20e6b.firebaseio.com",
+    "project_id": "kurokobasketball-20e6b",
+    "storage_bucket": "kurokobasketball-20e6b.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:18718729056:android:49e8789614f41ea43db405",
+        "mobilesdk_app_id": "1:1072414184846:android:29e6a167e92b7fc8e080df",
         "android_client_info": {
-          "package_name": "com.tiendollar.edgechangewallpaper"
+          "package_name": "com.ducky.kurokobasketball"
         }
       },
       "oauth_client": [
         {
-          "client_id": "18718729056-n8kscvt0oua22oiao7f7rqnc07dccli4.apps.googleusercontent.com",
+          "client_id": "1072414184846-fl8o0ve1ddqtjqs7u80s8qr5e9r0s86i.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ducky.kurokobasketball",
+            "certificate_hash": "5ff7ec582e79c85a162bf0be2c3006c10f8d090d"
+          }
+        },
+        {
+          "client_id": "1072414184846-ao55h4vhf149f5eed75topi3c384kvst.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyD0ozme4cz415tXAvID52rl4-HoQGIN2tA"
+          "current_key": "AIzaSyD7FM6lPRTfe1EKa1XRMKRcbJz0Ffv0X7k"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "18718729056-n8kscvt0oua22oiao7f7rqnc07dccli4.apps.googleusercontent.com",
+              "client_id": "1072414184846-ao55h4vhf149f5eed75topi3c384kvst.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

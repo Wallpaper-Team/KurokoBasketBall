@@ -13,7 +13,7 @@
         android:elevation="3dp"
         app:cardCornerRadius="10dp">
 
-        <com.tiendollar.edgechangewallpaper.common.widget.RectangleImageView
+        <com.ducky.kurokobasketball.common.widget.RectangleImageView
             android:id="@+id/thumbnail"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

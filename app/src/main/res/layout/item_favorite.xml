@@ -16,7 +16,7 @@
             android:elevation="3dp"
             card_view:cardCornerRadius="@dimen/ten_dp">
 
-            <com.tiendollar.edgechangewallpaper.common.widget.RectangleImageView
+            <com.ducky.kurokobasketball.common.widget.RectangleImageView
                 android:id="@+id/thumbnail"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -29,6 +29,6 @@
 
         <variable
             name="image"
-            type="com.tiendollar.edgechangewallpaper.model.Image" />
+            type="com.ducky.kurokobasketball.model.Image" />
     </data>
 </layout>

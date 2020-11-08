@@ -27,6 +27,6 @@
     <data>
         <variable
             name="image"
-            type="com.tiendollar.edgechangewallpaper.model.Image" />
+            type="com.ducky.kurokobasketball.model.Image" />
     </data>
 </layout>

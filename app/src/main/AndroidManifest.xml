@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.tiendollar.edgechangewallpaper">
+    package="com.ducky.kurokobasketball">
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.SET_WALLPAPER" />
@@ -19,21 +19,21 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".ui.cropper.CropperActivity"
+        <activity android:name="com.ducky.kurokobasketball.ui.cropper.CropperActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity
-            android:name=".ui.album.AlbumActivity"
+            android:name="com.ducky.kurokobasketball.ui.album.AlbumActivity"
             android:label="@string/title_activity_album"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".ui.wallpaper.WallpapersActivity"
+            android:name="com.ducky.kurokobasketball.ui.wallpaper.WallpapersActivity"
             android:label="@string/title_activity_wallpapers"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".ui.MainActivity"
+            android:name="com.ducky.kurokobasketball.ui.MainActivity"
             android:label="@string/title_activity_main"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".ui.SplashActivity">
+        <activity android:name="com.ducky.kurokobasketball.ui.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -42,11 +42,11 @@
         </activity>
 
         <service
-            android:name=".service.ChangeWallPaperService"
+            android:name="com.ducky.kurokobasketball.service.ChangeWallPaperService"
             android:enabled="true"
             android:exported="true" />
 
-        <receiver android:name=".network.MyReceiver">
+        <receiver android:name="com.ducky.kurokobasketball.network.MyReceiver">
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
                 <action android:name="android.net.wifi.WIFI_STATE_CHANGED" />

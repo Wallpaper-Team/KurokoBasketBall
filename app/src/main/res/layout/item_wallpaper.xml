@@ -20,7 +20,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:background="?attr/selectableItemBackgroundBorderless">
-                <com.tiendollar.edgechangewallpaper.common.widget.SquareImageView
+                <com.ducky.kurokobasketball.common.widget.SquareImageView
                     android:id="@+id/thumbnail"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -44,6 +44,6 @@
 
         <variable
             name="image"
-            type="com.tiendollar.edgechangewallpaper.model.Image" />
+            type="com.ducky.kurokobasketball.model.Image" />
     </data>
 </layout>

@@ -6,7 +6,7 @@
     <data>
         <variable
             name="album"
-            type="com.tiendollar.edgechangewallpaper.model.Album" />
+            type="com.ducky.kurokobasketball.model.Album" />
     </data>
 
     <LinearLayout
@@ -29,7 +29,7 @@
                 android:layout_height="match_parent"
                 android:background="?attr/selectableItemBackgroundBorderless">
 
-                <com.tiendollar.edgechangewallpaper.common.widget.SquareAlbumView
+                <com.ducky.kurokobasketball.common.widget.SquareAlbumView
                     android:id="@+id/thumbnail"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
