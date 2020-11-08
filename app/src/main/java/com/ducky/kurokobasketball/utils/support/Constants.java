@@ -5,7 +5,7 @@ import android.Manifest;
 
 public class Constants {
 
-    public static final String APP_OWNER_FOLDER_NAME = "EdgeChangeWPP";
+    public static final String APP_OWNER_FOLDER_NAME = "KuroKoNoBasuke";
 
     public static final String ALBUMS = "Albums";
 
