@@ -1,37 +1,28 @@
 package com.ducky.kurokobasketball.ui.wallpaper;
 
-import android.app.Application;
-import android.content.Context;
-
-import androidx.annotation.NonNull;
-import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.ViewModel;
 
-import com.ducky.kurokobasketball.model.Album;
+import com.ducky.kurokobasketball.database.ImageDAO;
 import com.ducky.kurokobasketball.model.Image;
-import com.ducky.kurokobasketball.model.ImageRepository;
 
 import java.util.List;
 
-public class WallpaperViewModel extends AndroidViewModel {
+import javax.inject.Inject;
 
-    private ImageRepository imageRepository;
-    private Context context;
+import dagger.hilt.android.lifecycle.HiltViewModel;
 
+@HiltViewModel
+public class WallpaperViewModel extends ViewModel {
 
-    public WallpaperViewModel(@NonNull Application application) {
-        super(application);
-        context = application.getApplicationContext();
+    private final ImageDAO imageDAO;
+
+    @Inject
+    public WallpaperViewModel(ImageDAO imageDAO) {
+        this.imageDAO = imageDAO;
     }
 
-    public void setAlbum(Album album){
-        if(context!=null){
-            imageRepository = new ImageRepository(context, album);
-        }
+    public LiveData<List<Image>> getImages(String albumName) {
+        return imageDAO.getImageList(albumName);
     }
-
-    LiveData<List<Image>> getAllWallpaper(){
-        return imageRepository.getMutableLiveData();
-    }
-
 }

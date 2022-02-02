@@ -11,6 +11,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
@@ -73,81 +74,50 @@ public class WindowUtils {
                         | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
     }
 
-    public static void setWallPaperFitScreen(Context context, final String file) {
-        SharedPreferences prefs = getDefaultSharedPreferences(context);
+    public static void setWallPaperFitScreen(final Context context, final String file) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         String type = prefs.getString(Constants.SET_WALLPAPER_OPTION, "");
-        new SetWallPaper(new WeakReference<>(context)).execute(file, type);
+        setWallPaperFitScreen(context, type, file);
     }
 
-    static class SetWallPaper extends AsyncTask<String, Void, Void> {
-        private WeakReference<Context> context;
-        private String flagS = "";
-
-        SetWallPaper(WeakReference<Context> context) {
-            this.context = context;
+    public static void setWallPaperFitScreen(final Context context, String type, final String file) {
+        int flag = 0;
+        if (type.equals(Constants.HOME_SCREEN)) {
+            flag = FLAG_SYSTEM;
+        } else if (type.equals(Constants.LOCK_SCREEN)) {
+            flag = FLAG_LOCK;
+        } else {
+            flag = FLAG_LOCK | FLAG_SYSTEM;
         }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-
-        @RequiresApi(api = Build.VERSION_CODES.N)
-        @Override
-        protected Void doInBackground(String... strings) {
-            String file = strings[0];
-            flagS = strings[1];
-            int flag;
-            if (flagS.equals(Constants.HOME_SCREEN)) {
-                flag = FLAG_SYSTEM;
-            } else if (flagS.equals(Constants.LOCK_SCREEN)) {
-                flag = FLAG_LOCK;
-            } else flag = FLAG_LOCK | FLAG_SYSTEM;
-            Log.d(TAG, "Set file: " + file);
-            WallpaperManager manager = getInstance(context.get());
-            try {
-                File file1 = new File(file);
-                if (!file1.exists()) {
-                    Log.d(TAG, "doInBackground: File not found");
-                    Toast.makeText(context.get(), "Image not found", Toast.LENGTH_SHORT).show();
-                    return null;
-                }
-                DisplayMetrics metrics = new DisplayMetrics();
-                WindowManager wm = (WindowManager) context.get().getSystemService(Context.WINDOW_SERVICE);
-                assert wm != null;
-                wm.getDefaultDisplay().getMetrics(metrics);
-                int height = metrics.heightPixels;
-                int width = metrics.widthPixels;
-                if (width > height) {
-                    int temp = width;
-                    width = height;
-                    height = temp;
-                }
-//                Bitmap bitmap = ImageUtils.scaleCenterCrop(file, height, width);
-                Bitmap bitmap = ImageUtils.decodeBitmapFromFile(file, width, height);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    manager.setBitmap(bitmap, null, false, flag);
-                } else {
-                    manager.setBitmap(bitmap);
-                }
-            } catch (Exception e) {
-                Log.e(TAG, "setWallPaperFitScreen: " + e.toString());
+        Log.d(TAG, "Set file: " + file);
+        WallpaperManager manager = getInstance(context);
+        try {
+            File file1 = new File(file);
+            if (!file1.exists()) {
+                Toast.makeText(context, "Image not found", Toast.LENGTH_SHORT).show();
             }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            String message = context.get().getString(R.string.set_wallpaper_done, flagS);
-            Toast.makeText(context.get(), message, Toast.LENGTH_LONG).show();
-            if(progressDialog!=null){
-                progressDialog.dismiss();
+            DisplayMetrics metrics = new DisplayMetrics();
+            WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+            assert wm != null;
+            wm.getDefaultDisplay().getMetrics(metrics);
+            int height = metrics.heightPixels;
+            int width = metrics.widthPixels;
+            if (width > height) {
+                int temp = width;
+                width = height;
+                height = temp;
             }
-            if (context.get() instanceof Activity) {
-                ((Activity) context.get()).finish();
+            Bitmap bitmap = ImageUtils.decodeBitmapFromFile(file, width, height);
+            bitmap = ImageUtils.centerCrop(bitmap, width, height);
+            manager.suggestDesiredDimensions(width, height);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                manager.setBitmap(bitmap, null, false, flag);
+            } else {
+                manager.setBitmap(bitmap);
             }
-            super.onPostExecute(aVoid);
+            Toast.makeText(context, "Enjoy new wallpaper!", Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            Log.e(TAG, "setWallPaperFitScreen: " + e.toString());
         }
     }
 

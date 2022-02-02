@@ -12,19 +12,11 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="centerInside"
-            bind:coverImage="@{image.path}"/>
-
-        <CheckBox
-            android:id="@+id/favorite"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:button="@drawable/checkbox_selector"
-            android:checked="@{image.checked}"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
+            bind:coverImage="@{image.path??image.mediumSize}" />
     </FrameLayout>
 
     <data>
+
         <variable
             name="image"
             type="com.ducky.kurokobasketball.model.Image" />

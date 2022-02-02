@@ -3,42 +3,28 @@
     xmlns:bind="http://schemas.android.com/apk/res-auto"
     xmlns:card_view="http://schemas.android.com/apk/res-auto">
 
-    <LinearLayout
+    <androidx.cardview.widget.CardView
+        android:id="@+id/card_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="@dimen/five_dp"
+        android:elevation="3dp"
+        card_view:cardCornerRadius="@dimen/ten_dp">
 
-        <androidx.cardview.widget.CardView
-            android:id="@+id/card_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_margin="@dimen/five_dp"
-            android:elevation="3dp"
-            card_view:cardCornerRadius="@dimen/ten_dp">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-            <RelativeLayout
-                android:layout_width="wrap_content"
+            <com.ducky.kurokobasketball.common.widget.SquareImageView
+                android:id="@+id/thumbnail"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="?attr/selectableItemBackgroundBorderless">
-                <com.ducky.kurokobasketball.common.widget.SquareImageView
-                    android:id="@+id/thumbnail"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:scaleType="centerCrop"
-                    bind:coverImage="@{image.path}" />
-                <CheckBox
-                    android:id="@+id/favorite"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:button="@drawable/checkbox_selector"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:layout_alignTop="@id/thumbnail"
-                    android:layout_alignStart="@id/thumbnail"
-                    android:checked="@{image.checked}"
-                    android:layout_margin="10dp"/>
-            </RelativeLayout>
-        </androidx.cardview.widget.CardView>
-    </LinearLayout>
+                android:scaleType="centerCrop"
+                bind:coverImage="@{image.mediumSize}" />
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
 
     <data>
 

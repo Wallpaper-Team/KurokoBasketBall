@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:card_view="http://schemas.android.com/apk/res-auto"
-    xmlns:bind="http://schemas.android.com/apk/res-auto">
+    xmlns:bind="http://schemas.android.com/apk/res-auto"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto">
 
     <data>
+
         <variable
             name="album"
             type="com.ducky.kurokobasketball.model.Album" />
@@ -19,34 +20,32 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_margin="@dimen/five_dp"
             android:elevation="3dp"
             card_view:cardCornerRadius="10dp">
 
             <LinearLayout
-                android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="?attr/selectableItemBackgroundBorderless">
+                android:orientation="vertical">
 
                 <com.ducky.kurokobasketball.common.widget.SquareAlbumView
                     android:id="@+id/thumbnail"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:scaleType="centerCrop"
-                    bind:coverAlbum="@{album.coverPath}"
-                    android:layout_margin="5dp"/>
+                    bind:coverAlbum="@{album.coverPath}" />
+
                 <TextView
                     android:id="@+id/titleAlbum"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:background="@color/colorPrimary"
+                    android:gravity="center"
                     android:maxLines="1"
                     android:padding="@dimen/ten_dp"
-                    android:gravity="center"
                     android:text="@{album.title}"
                     android:textColor="@android:color/white"
-                    android:textSize="@dimen/fifteen_dp"
-                    android:background="@color/colorPrimary"/>
+                    android:textSize="@dimen/fifteen_dp" />
             </LinearLayout>
         </androidx.cardview.widget.CardView>
     </LinearLayout>

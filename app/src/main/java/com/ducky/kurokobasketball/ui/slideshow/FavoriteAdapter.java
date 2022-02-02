@@ -10,7 +10,6 @@ import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ducky.kurokobasketball.R;
-import com.ducky.kurokobasketball.database.ImagesDatabase;
 import com.ducky.kurokobasketball.databinding.ItemFavoriteBinding;
 import com.ducky.kurokobasketball.model.Image;
 
@@ -20,11 +19,9 @@ import java.util.Collections;
 public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.ImageHolder> {
     private ArrayList<Image> mImages;
     private Context mContext;
-    private ImagesDatabase imagesDatabase;
 
     FavoriteAdapter(Context mContext) {
         this.mContext = mContext;
-        imagesDatabase = ImagesDatabase.getInMemoryDatabase(mContext);
     }
 
     @NonNull
@@ -48,7 +45,7 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.ImageH
 
     @Override
     public int getItemCount() {
-        return mImages.size();
+        return mImages == null? 0: mImages.size();
     }
 
     class ImageHolder extends RecyclerView.ViewHolder {
@@ -63,10 +60,10 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.ImageH
     void swipe(final int position) {
         new AlertDialog.Builder(mContext).setTitle("Delete Wallpaper").setMessage("Do you want to delete this wallpaper?").
                 setPositiveButton(android.R.string.yes, (dialog, which) -> {
-                    if (mImages.get(position).getAlbumId() != -1) {
+                    /*if (mImages.get(position).getAlbumId() != -1) {
                         mImages.get(position).setChecked(false);
-                        imagesDatabase.imageDAO().insert(mImages.get(position));
-                    }
+//                        imagesDatabase.imageDAO().insert(mImages.get(position));
+                    }*/
                     mImages.remove(position);
                     notifyItemRemoved(position);
                 })
@@ -77,29 +74,9 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.ImageH
 
     }
 
-    void onMove(int fromPosition, int toPosition) {
-        if (fromPosition < toPosition) {
-            for (int i = fromPosition; i < toPosition; i++) {
-                int tmp = mImages.get(i).getImageOrder();
-                mImages.get(i).setImageOrder(mImages.get(i + 1).getImageOrder());
-                mImages.get(i + 1).setImageOrder(tmp);
-                Collections.swap(mImages, i, i + 1);
-            }
-        } else {
-            for (int i = fromPosition; i > toPosition; i--) {
-                int tmp = mImages.get(i).getImageOrder();
-                mImages.get(i).setImageOrder(mImages.get(i - 1).getImageOrder());
-                mImages.get(i - 1).setImageOrder(tmp);
-                Collections.swap(mImages, i, i - 1);
-            }
-        }
-        notifyItemMoved(fromPosition, toPosition);
-    }
-
     void addMoreImage(Image image) {
-        image.setChecked(true);
-        long id = imagesDatabase.imageDAO().insert(image);
-        image.setId((int) id);
+        /*long id = imagesDatabase.imageDAO().insert(image);
+        image.setId((int) id);*/
         mImages.add(image);
     }
 }

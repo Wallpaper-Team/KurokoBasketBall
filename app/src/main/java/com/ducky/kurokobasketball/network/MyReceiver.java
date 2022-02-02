@@ -7,7 +7,6 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.ducky.kurokobasketball.ui.SplashActivity;
-import com.ducky.kurokobasketball.database.DataLoaderFromFireBase;
 
 import java.lang.ref.WeakReference;
 
@@ -24,8 +23,6 @@ public class MyReceiver extends BroadcastReceiver {
             Toast.makeText(context, status + " ... Please connect internet during loading process", Toast.LENGTH_SHORT).show();
         } else {
             Log.d("ahuhu", "onReceive: ");
-            DataLoaderFromFireBase loader = new DataLoaderFromFireBase(new WeakReference<>(context));
-            loader.loadDefaultAlbumsIfNecessary();
         }
     }
 }

@@ -8,13 +8,18 @@ import com.bumptech.glide.request.RequestOptions;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.widget.ImageView;
 
 import com.ducky.kurokobasketball.R;
+import com.ducky.kurokobasketball.common.widget.GridSpace;
+import com.ducky.kurokobasketball.database.AlbumDAO;
+import com.ducky.kurokobasketball.databinding.ActivityAlbumBinding;
 import com.ducky.kurokobasketball.model.Album;
 import com.ducky.kurokobasketball.model.Image;
 import com.ducky.kurokobasketball.utils.support.Constants;
@@ -23,29 +28,32 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
 public class AlbumActivity extends AppCompatActivity {
-    private AlbumAdapter adapter;
+    @Inject
+    AlbumAdapter adapter;
+    @Inject
+    AlbumDAO albumDAO;
     private AlbumViewModel viewModel;
     private Album album;
-    private Observer<List<Image>> mObserver = new Observer<List<Image>>() {
-        @Override
-        public void onChanged(List<Image> images) {
-            adapter.setImages((ArrayList<Image>) images);
-        }
-    };
+    private ActivityAlbumBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_album);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+        binding = ActivityAlbumBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+        setSupportActionBar(binding.toolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        album = getIntent().getParcelableExtra(Constants.ALBUM);
+        String title = getIntent().getStringExtra(Constants.ALBUM);
+        album = albumDAO.findById(title);
         assert album != null;
-        setTitle(album.getTitle());
+        setTitle(title);
 
         initView();
     }
@@ -56,19 +64,6 @@ public class AlbumActivity extends AppCompatActivity {
         return true;
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        viewModel.getAllImages().observe(this, mObserver);
-        viewModel.refreshData();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        viewModel.getAllImages().removeObserver(mObserver);
-    }
-
     private void initView() {
         ImageView header = findViewById(R.id.header);
         Glide.with(getApplicationContext())
@@ -77,14 +72,15 @@ public class AlbumActivity extends AppCompatActivity {
                 .load(album.getCoverPath())
                 .into(header);
 
-        RecyclerView recyclerView = findViewById(R.id.viewWpps);
         GridLayoutManager mLayoutManager = new GridLayoutManager(this, 2);
-        recyclerView.setLayoutManager(mLayoutManager);
-        recyclerView.setHasFixedSize(true);
+        binding.contentAlbum.viewWpps.setLayoutManager(mLayoutManager);
+        binding.contentAlbum.viewWpps.addItemDecoration(new GridSpace(2, 20, false));
 
-        viewModel = ViewModelProviders.of(this).get(AlbumViewModel.class);
-        viewModel.setAlbum(album);
-        adapter = new AlbumAdapter(this, album);
-        recyclerView.setAdapter(adapter);
+        viewModel = new ViewModelProvider(this).get(AlbumViewModel.class);
+        viewModel.getImageList(album.getTitle()).observe(this, images -> {
+            Log.d("duc.dv1", "initView: " + images.size());
+            adapter.setImages((ArrayList<Image>) images);
+        });
+        binding.contentAlbum.viewWpps.setAdapter(adapter);
     }
 }

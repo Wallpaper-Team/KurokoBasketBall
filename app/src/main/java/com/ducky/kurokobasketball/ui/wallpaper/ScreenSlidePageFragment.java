@@ -2,6 +2,7 @@ package com.ducky.kurokobasketball.ui.wallpaper;
 
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +15,6 @@ import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 
 import com.ducky.kurokobasketball.R;
-import com.ducky.kurokobasketball.database.ImagesDatabase;
 import com.ducky.kurokobasketball.databinding.FragmentScreenSlidePageBinding;
 import com.ducky.kurokobasketball.model.Image;
 
@@ -24,7 +24,6 @@ public class ScreenSlidePageFragment extends Fragment {
 
     private Image image;
     private boolean isShown = false;
-    private ImagesDatabase imagesDatabase;
 
     ScreenSlidePageFragment(Image image) {
         this.image = image;
@@ -33,7 +32,8 @@ public class ScreenSlidePageFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        FragmentScreenSlidePageBinding binding = DataBindingUtil.inflate(inflater, R.layout.fragment_screen_slide_page, container, false);
+        FragmentScreenSlidePageBinding binding = FragmentScreenSlidePageBinding.inflate(
+                LayoutInflater.from(container.getContext()), container, false);
         binding.setImage(image);
         return binding.getRoot();
     }
@@ -62,11 +62,5 @@ public class ScreenSlidePageFragment extends Fragment {
             }
         });
 
-        imagesDatabase = ImagesDatabase.getInMemoryDatabase(getActivity());
-        CheckBox checkBox = view.findViewById(R.id.favorite);
-        checkBox.setOnCheckedChangeListener((compoundButton, b) -> {
-            image.setChecked(b);
-            imagesDatabase.imageDAO().insert(image);
-        });
     }
 }

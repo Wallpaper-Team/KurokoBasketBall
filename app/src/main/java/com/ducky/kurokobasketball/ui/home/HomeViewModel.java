@@ -1,29 +1,56 @@
 package com.ducky.kurokobasketball.ui.home;
 
-import android.app.Application;
+import android.util.Log;
 
-import androidx.annotation.NonNull;
-import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.ViewModel;
 
+import com.ducky.kurokobasketball.database.AlbumDAO;
 import com.ducky.kurokobasketball.model.Album;
-import com.ducky.kurokobasketball.model.AlbumRepository;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class HomeViewModel extends AndroidViewModel {
-    private AlbumRepository albumRepository;
+import javax.inject.Inject;
 
-    public HomeViewModel(@NonNull Application application) {
-        super(application);
-        albumRepository = new AlbumRepository(application.getBaseContext());
+import dagger.hilt.android.lifecycle.HiltViewModel;
+
+@HiltViewModel
+public class HomeViewModel extends ViewModel {
+
+    private final AlbumDAO albumDAO;
+    private final DatabaseReference mDatabase;
+
+    @Inject
+    public HomeViewModel(AlbumDAO albumDAO) {
+        this.albumDAO = albumDAO;
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+        if (albumDAO.countItem() == 0) {
+            refresh();
+        }
     }
 
-    void updateData() {
-        albumRepository.updateData();
+    public LiveData<List<Album>> getAllAlbums() {
+        return albumDAO.findAll();
     }
 
-    LiveData<List<Album>> getAllAlbums() {
-        return albumRepository.getMutableLiveData();
+    public void refresh() {
+        Log.d("duc.dv1", "refresh: ");
+        mDatabase.child("Topics/KurokoBasketball/Albums").get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                List<Album> albums = new ArrayList<>();
+                for (DataSnapshot child : task.getResult().getChildren()) {
+                    Log.d("duc.dv1", "refresh: " + child);
+                    Album album = new Album();
+                    album.setTitle(child.getKey());
+                    album.setCoverPath(child.child("imageUrl").getValue(String.class));
+                    albums.add(album);
+                }
+                albumDAO.insert(albums);
+            }
+        });
     }
 }

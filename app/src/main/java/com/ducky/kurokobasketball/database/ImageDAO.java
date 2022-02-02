@@ -1,5 +1,6 @@
 package com.ducky.kurokobasketball.database;
 
+import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.Query;
@@ -19,7 +20,7 @@ public interface ImageDAO {
     long insert(Image image);
 
     @Insert(onConflict = IGNORE)
-    void insertOrReplace(Image... image);
+    void insert(List<Image> images);
 
     @Update(onConflict = REPLACE)
     void update(Image image);
@@ -27,21 +28,21 @@ public interface ImageDAO {
     @Query("DELETE FROM image")
     void deleteAll();
 
-    @Query("DELETE FROM image WHERE "+ DatabaseOpenHelper.ImageEntry.ALBUM_ID +" = :albumID")
-    void deleteImageByAlbumId(int albumID);
+    @Query("DELETE FROM image WHERE albumId LIKE :albumID")
+    void deleteImageByAlbumId(String albumID);
 
-    @Query("SELECT * FROM image WHERE " + DatabaseOpenHelper.ImageEntry.ALBUM_ID + " = :albumID ORDER BY " + DatabaseOpenHelper.ImageEntry.IMAGE_ORDER + " ASC LIMIT 1")
-    Image getImageByOrderInAlbum(int albumID);
+    @Query("SELECT * FROM image WHERE albumId LIKE :album")
+    LiveData<List<Image>> getImageList(String album);
 
-    @Query("SELECT * FROM image WHERE " + DatabaseOpenHelper.ImageEntry.ALBUM_ID + " = :albumID ORDER BY " + DatabaseOpenHelper.ImageEntry.IMAGE_ORDER + " ASC LIMIT :numItem")
-    List<Image> getImageList(int albumID, int numItem);
+    @Query("SELECT * FROM image WHERE albumId LIKE :albumName ORDER BY id DESC LIMIT 1")
+    Image findLatestImageByID(String albumName);
 
-    @Query("SELECT * FROM image WHERE " + DatabaseOpenHelper.ImageEntry.ALBUM_ID + " = :albumID ORDER BY " + DatabaseOpenHelper.ImageEntry.IMAGE_ORDER + " ASC")
-    List<Image> getImageList(int albumID);
+    @Query("SELECT * FROM image WHERE id LIKE :id")
+    Image findImageByID(String id);
 
-    @Query("DELETE FROM image WHERE "+ DatabaseOpenHelper.ImageEntry._ID +" = :id")
-    void deleteImageById(int id);
+    @Query("DELETE FROM image WHERE id LIKE :id")
+    void deleteImageById(String id);
 
-    @Query("SELECT * FROM image WHERE "+ DatabaseOpenHelper.ImageEntry.IMAGE_FAVORITED +" = 1 ORDER BY " + DatabaseOpenHelper.ImageEntry.IMAGE_ORDER + " ASC")
-    List<Image> getImageListFavorite();
+    @Query("SELECT * FROM image")
+    LiveData<Image> getImageListFavorite();
 }

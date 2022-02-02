@@ -16,20 +16,27 @@ import com.ducky.kurokobasketball.ui.album.AlbumActivity;
 import com.ducky.kurokobasketball.utils.support.Constants;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import javax.inject.Inject;
+
+import dagger.hilt.android.qualifiers.ActivityContext;
 
 public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.AlBumHolder> {
-    private ArrayList<Album> albumsFiltered = new ArrayList<>();
+    private List<Album> albumsFiltered = new ArrayList<>();
     private Context mContext;
 
-    HomeAdapter(Context mContext) {
-        this.mContext = mContext;
+    @Inject
+    public HomeAdapter(@ActivityContext Context context) {
+        this.mContext = context;
     }
 
     @NonNull
     @Override
     public AlBumHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        ItemAlbumsBinding itemAlbumsBinding = DataBindingUtil.inflate(LayoutInflater.from(parent.getContext()),
-                R.layout.item_albums, parent, false);
+        ItemAlbumsBinding itemAlbumsBinding = ItemAlbumsBinding.inflate(
+                LayoutInflater.from(parent.getContext()), parent, false
+        );
         return new AlBumHolder(itemAlbumsBinding);
     }
 
@@ -39,7 +46,7 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.AlBumHolder> {
         holder.albumsBinding.setAlbum(currentAlbum);
         holder.albumsBinding.getRoot().setOnClickListener(v -> {
             Intent intent = new Intent(mContext, AlbumActivity.class);
-            intent.putExtra(Constants.ALBUM, currentAlbum);
+            intent.putExtra(Constants.ALBUM, currentAlbum.getTitle());
             intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
             mContext.startActivity(intent);
         });
@@ -48,15 +55,11 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.AlBumHolder> {
 
     @Override
     public int getItemCount() {
-        if (albumsFiltered != null) {
-            return albumsFiltered.size();
-        } else {
-            return 0;
-        }
+        return albumsFiltered == null ? 0 : albumsFiltered.size();
     }
 
 
-    void setAlbums(ArrayList<Album> mAlbums) {
+    void setAlbums(List<Album> mAlbums) {
         albumsFiltered = mAlbums;
         notifyDataSetChanged();
     }

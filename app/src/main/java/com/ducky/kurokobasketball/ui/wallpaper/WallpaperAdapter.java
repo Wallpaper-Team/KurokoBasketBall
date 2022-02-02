@@ -10,6 +10,8 @@ import com.ducky.kurokobasketball.model.Image;
 import java.util.ArrayList;
 import java.util.List;
 
+import dagger.hilt.android.AndroidEntryPoint;
+
 public class WallpaperAdapter extends FragmentStatePagerAdapter {
 
     private List<Image> imageList;

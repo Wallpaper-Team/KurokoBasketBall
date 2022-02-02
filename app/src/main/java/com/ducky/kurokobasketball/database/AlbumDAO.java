@@ -1,5 +1,7 @@
 package com.ducky.kurokobasketball.database;
 
+import androidx.lifecycle.LiveData;
+import androidx.paging.PagingSource;
 import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.Query;
@@ -14,11 +16,11 @@ import static androidx.room.OnConflictStrategy.REPLACE;
 
 @Dao
 public interface AlbumDAO {
-    @Insert(onConflict = REPLACE)
+    @Insert(onConflict = IGNORE)
     long insert(Album album);
 
     @Insert(onConflict = IGNORE)
-    void insertOrReplace(Album... albums);
+    void insert(List<Album> albums);
 
     @Update(onConflict = REPLACE)
     void update(Album album);
@@ -26,13 +28,15 @@ public interface AlbumDAO {
     @Query("DELETE FROM album")
     void deleteAll();
 
-    @Query("DELETE FROM album WHERE "+ DatabaseOpenHelper.AlbumEntry._ID +" = :albumID")
-    void deleteAlbumById(int albumID);
+    @Query("DELETE FROM album WHERE mTitle LIKE :title")
+    void deleteAlbumById(String title);
 
-    @Query("SELECT * FROM album ORDER BY " + DatabaseOpenHelper.AlbumEntry.ALBUM_ORDER + " ASC")
-    List<Album> findAll();
+    @Query("SELECT * FROM album")
+    LiveData<List<Album>> findAll();
 
-    @Query("SELECT * FROM album WHERE "+ DatabaseOpenHelper.AlbumEntry._ID +" = :albumID")
-    Album findById(int albumID);
+    @Query("SELECT * FROM album WHERE mTitle LIKE :albumID")
+    Album findById(String albumID);
 
+    @Query("SELECT COUNT(mTitle) FROM album")
+    int countItem();
 }

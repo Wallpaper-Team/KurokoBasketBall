@@ -36,7 +36,6 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ducky.kurokobasketball.R;
-import com.ducky.kurokobasketball.database.AlbumsDatabase;
 import com.ducky.kurokobasketball.model.Album;
 import com.ducky.kurokobasketball.model.Image;
 import com.ducky.kurokobasketball.model.State;
@@ -59,7 +58,6 @@ public class ChangeWallPaperService extends Service implements View.OnClickListe
     private Intent intent;
     private PendingIntent pIntent;
     private NotificationCompat.Builder builder;
-    private AlbumsDatabase database;
     private static Album album;
 
     // The following are used for the shake detection
@@ -151,7 +149,6 @@ public class ChangeWallPaperService extends Service implements View.OnClickListe
             case Constants.ACTION_START_FOREGROUND_SERVICE:
                 createNotificationChannel();
                 currentPosition = intent.getIntExtra(Constants.CURRENTITEM, 0);
-                images = intent.getParcelableArrayListExtra(Constants.IMAGE);
                 setUpWallpaper();
                 break;
             case Constants.ACTION_START_IN_LOOP_FOREGROUND_SERVICE:
@@ -183,12 +180,7 @@ public class ChangeWallPaperService extends Service implements View.OnClickListe
         //Handle tap action go back to
 
         Intent intentBackToScreen = new Intent(this, MainActivity.class);
-        intentBackToScreen.putParcelableArrayListExtra(Constants.IMAGE, images);
         intentBackToScreen.putExtra(Constants.CURRENTITEM, currentPosition);
-        if (database == null)
-            database = AlbumsDatabase.getInMemoryDatabase(this);
-        try {
-            album = database.albumDao().findById(images.get(currentPosition).getAlbumId());
             String albumName = album.getTitle();
             String posPerTotal = getString(R.string.positionPerTotal, currentPosition + 1, images.size());
             //Stop
@@ -206,25 +198,6 @@ public class ChangeWallPaperService extends Service implements View.OnClickListe
             intentPre.setAction(Constants.ACTION_PREVIOUS);
             PendingIntent pendingIntentPre = PendingIntent.getService(this, 0, intentPre, PendingIntent.FLAG_UPDATE_CURRENT);
 
-//            Bitmap bitmap = BitmapFactory.decodeFile(images.get(currentPosition).getPath());
-            builder = new NotificationCompat.Builder(this, Constants.CHANEL_ID)
-                    .setSmallIcon(R.mipmap.ic_launcher)
-                    .setContentTitle(getString(R.string.noti_text_title))
-                    .setContentText(albumName + " (" + posPerTotal + ")")
-                    .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                    .addAction(android.R.drawable.ic_media_previous, getString(R.string.previous_auto_change), pendingIntentPre)
-                    .addAction(android.R.drawable.ic_media_pause, getString(R.string.stop_auto_change), pIntent)
-                    .addAction(android.R.drawable.ic_media_next, getString(R.string.next_auto_change), pendingIntentNext)
-                    .setCategory(NotificationCompat.CATEGORY_MESSAGE)
-//                    .setLargeIcon(bitmap)
-                    .setNumber(1)
-                    .setBadgeIconType(NotificationCompat.BADGE_ICON_SMALL);
-//                    .setStyle(new NotificationCompat.BigPictureStyle().bigPicture(bitmap).bigLargeIcon(null));
-            startForeground(Constants.FOREGROUND_ID, builder.build());
-        } catch (Exception e) {
-            Log.e(TAG, "startForegroundService: " + e.toString());
-        }
-
     }
 
 
@@ -232,9 +205,7 @@ public class ChangeWallPaperService extends Service implements View.OnClickListe
         Intent intent = new Intent();
         intent.setAction(Constants.ACTION_APPWIDGET_UPDATE);
         intent.setPackage(Constants.CHANEL_ID);
-        intent.putParcelableArrayListExtra(Constants.IMAGE, images);
         intent.putExtra(Constants.CURRENTITEM, currentPosition);
-        intent.putExtra(Constants.ALBUM, album);
         sendBroadcast(intent);
     }
 
@@ -395,7 +366,6 @@ public class ChangeWallPaperService extends Service implements View.OnClickListe
                 break;
             case R.id.app:
                 Intent intent = new Intent(this, MainActivity.class);
-                intent.putExtra(Constants.ALBUM, album);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
                 break;

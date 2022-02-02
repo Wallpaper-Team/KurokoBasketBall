@@ -2,28 +2,34 @@ package com.ducky.kurokobasketball.ui.wallpaper;
 
 import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 
+import com.ducky.kurokobasketball.common.DownloadCallback;
+import com.ducky.kurokobasketball.common.FileUtils;
+import com.ducky.kurokobasketball.common.Utils;
+import com.ducky.kurokobasketball.database.AlbumDAO;
+import com.ducky.kurokobasketball.database.ImageDAO;
+import com.ducky.kurokobasketball.databinding.ActivityWallpapersBinding;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.preference.PreferenceManager;
 import androidx.viewpager.widget.ViewPager;
 
 import android.os.Environment;
 import android.os.Handler;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
 import com.ducky.kurokobasketball.R;
 import com.ducky.kurokobasketball.common.ZoomOutPageTransformer;
-import com.ducky.kurokobasketball.database.AlbumsDatabase;
-import com.ducky.kurokobasketball.database.ImagesDatabase;
 import com.ducky.kurokobasketball.model.Album;
 import com.ducky.kurokobasketball.model.Image;
 import com.ducky.kurokobasketball.ui.cropper.CropperActivity;
@@ -35,74 +41,66 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.AndroidEntryPoint;
+
 import static android.view.View.TRANSLATION_X;
 import static android.view.View.TRANSLATION_Y;
 
-public class WallpapersActivity extends AppCompatActivity implements View.OnClickListener {
+@AndroidEntryPoint
+public class WallpapersActivity extends AppCompatActivity implements View.OnClickListener, DownloadCallback {
 
     private static final int TYPE_DOWNLOAD = 1;
     private static final int TYPE_CROP = 2;
     private static final int TYPE_SET_AS_WALLPAPER = 3;
     private WallpaperViewModel viewModel;
     private WallpaperAdapter adapter;
-    private FloatingActionButton cropBtn;
-    private FloatingActionButton setAsWPPBtn;
-    private FloatingActionButton shareBtn;
-    private FloatingActionButton downloadBtn;
-    private ProgressDialog dialog;
 
     private boolean isFabClicked = false;
-    private int curWPP = 0;
+    private String currentImage;
     private Image image;
-    private ViewPager viewPager;
     private boolean isShowingOptionBar = false;
     private SharedPreferences prefs;
 
+    private ActivityWallpapersBinding binding;
+    @Inject
+    ImageDAO imageDAO;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_wallpapers);
+        binding = ActivityWallpapersBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
         setupWindow();
 
         Bundle bundle = getIntent().getExtras();
         assert bundle != null;
-        Album album = bundle.getParcelable(Constants.ALBUM);
-        curWPP = bundle.getInt(Constants.CURRENTITEM);
-        assert album != null;
-        viewModel = ViewModelProviders.of(this).get(WallpaperViewModel.class);
-        viewModel.setAlbum(album);
+        currentImage = bundle.getString(Constants.CURRENTITEM);
+        viewModel = new ViewModelProvider(this).get(WallpaperViewModel.class);
+        image = imageDAO.findImageByID(currentImage);
+        assert image != null;
         adapter = new WallpaperAdapter(getSupportFragmentManager());
-        initView();
-    }
-
-    private void initView() {
-        viewPager = findViewById(R.id.pager);
-        viewPager.setAdapter(adapter);
-        viewPager.setPageTransformer(true, new ZoomOutPageTransformer());
-        viewModel.getAllWallpaper().observe(this, images -> {
+        binding.pager.setAdapter(adapter);
+        binding.pager.setPageTransformer(false, new ZoomOutPageTransformer());
+        viewModel.getImages(image.getAlbumId()).observe(this, images -> {
             adapter.setImageList(images);
-            if (images.size() > 0 && curWPP < images.size()) {
-                viewPager.setCurrentItem(curWPP);
+            for (int i = 0; i < images.size(); i++) {
+                if (images.get(i).getId().equalsIgnoreCase(image.getId())) {
+                    binding.pager.setCurrentItem(i,false);
+                    break;
+                }
             }
         });
-        cropBtn = findViewById(R.id.crop);
-        downloadBtn = findViewById(R.id.download);
-        setAsWPPBtn = findViewById(R.id.set_as_wpp);
-        shareBtn = findViewById(R.id.share);
-        FloatingActionButton fab = findViewById(R.id.fab);
-
-        cropBtn.setOnClickListener(this);
-        downloadBtn.setOnClickListener(this);
-        shareBtn.setOnClickListener(this);
-        setAsWPPBtn.setOnClickListener(this);
-        fab.setOnClickListener(this);
-
-
-        findViewById(R.id.home_option).setOnClickListener(this);
-        findViewById(R.id.lock_option).setOnClickListener(this);
-        findViewById(R.id.home_lock_option).setOnClickListener(this);
-        findViewById(R.id.back_option).setOnClickListener(this);
+        binding.crop.setOnClickListener(this);
+        binding.fab.setOnClickListener(this);
+        binding.download.setOnClickListener(this);
+        binding.setAsWpp.setOnClickListener(this);
+        binding.share.setOnClickListener(this);
+        binding.btnGroup.homeOption.setOnClickListener(this);
+        binding.btnGroup.lockOption.setOnClickListener(this);
+        binding.btnGroup.homeLockOption.setOnClickListener(this);
+        binding.btnGroup.backOption.setOnClickListener(this);
     }
 
     @Override
@@ -140,12 +138,12 @@ public class WallpapersActivity extends AppCompatActivity implements View.OnClic
 
     @Override
     public void onClick(View view) {
-        image = adapter.getCurrentItem(viewPager.getCurrentItem());
+        image = adapter.getCurrentItem(binding.pager.getCurrentItem());
         switch (view.getId()) {
             case R.id.crop:
-                if (!image.getPath().contains(Environment.getExternalStorageDirectory().getPath())) {
-                    dialog = ProgressDialog.show(this, "Downloading", "Please wait...", true);
-                    downloadImage(TYPE_CROP);
+                if (TextUtils.isEmpty(image.getPath())) {
+                    type = TYPE_CROP;
+                    downloadImage();
                 } else {
                     startCropperActivity(image.getPath());
                 }
@@ -156,9 +154,9 @@ public class WallpapersActivity extends AppCompatActivity implements View.OnClic
                 setClickEventOnFab();
                 break;
             case R.id.set_as_wpp:
-                if (!image.getPath().contains(Environment.getExternalStorageDirectory().getPath())) {
-                    dialog = ProgressDialog.show(this, "Downloading", "Please wait...", true);
-                    downloadImage(TYPE_SET_AS_WALLPAPER);
+                if (TextUtils.isEmpty(image.getPath())) {
+                    type = TYPE_SET_AS_WALLPAPER;
+                    downloadImage();
                 }else{
                     showOptionBar();
                 }
@@ -166,9 +164,9 @@ public class WallpapersActivity extends AppCompatActivity implements View.OnClic
                 break;
             case R.id.download:
                 if (image != null) {
-                    if (!image.getPath().contains(Environment.getExternalStorageDirectory().getPath())) {
-                        dialog = ProgressDialog.show(this, "Downloading", "Please wait...", true);
-                        downloadImage(TYPE_DOWNLOAD);
+                    if (TextUtils.isEmpty(image.getPath())) {
+                        type = TYPE_DOWNLOAD;
+                        downloadImage();
                     } else {
                         Toast.makeText(this, "Wallpaper was downloaded at " + image.getPath(), Toast.LENGTH_SHORT).show();
                     }
@@ -179,20 +177,19 @@ public class WallpapersActivity extends AppCompatActivity implements View.OnClic
                 setClickEventOnFab();
                 break;
             case R.id.home_option:
-                WindowUtils.setProgressDialog(this);
                 prefs.edit().putString(Constants.SET_WALLPAPER_OPTION, Constants.HOME_SCREEN).apply();
                 WindowUtils.setWallPaperFitScreen(this, image.getPath());
+                hideOptionBar();
                 break;
             case R.id.lock_option:
-                WindowUtils.setProgressDialog(this);
                 prefs.edit().putString(Constants.SET_WALLPAPER_OPTION, Constants.LOCK_SCREEN).apply();
                 WindowUtils.setWallPaperFitScreen(this, image.getPath());
-
+                hideOptionBar();
                 break;
             case R.id.home_lock_option:
-                WindowUtils.setProgressDialog(this);
                 prefs.edit().putString(Constants.SET_WALLPAPER_OPTION, Constants.HOME_AND_LOCK_SCREEN).apply();
                 WindowUtils.setWallPaperFitScreen(this, image.getPath());
+                hideOptionBar();
                 break;
             case R.id.back_option:
                 hideOptionBar();
@@ -200,46 +197,18 @@ public class WallpapersActivity extends AppCompatActivity implements View.OnClic
         }
     }
 
-    private void setClickEventOnFab() {
-        setAnimation(cropBtn, -250f, -200);
-        setAnimation(downloadBtn, -100f, -300);
-        setAnimation(setAsWPPBtn, 100f, -300);
-        setAnimation(shareBtn, 250f, -200);
-        isFabClicked = !isFabClicked;
+    private int type;
+
+    private void downloadImage() {
+        Utils.downloadThroughManager(image.getAlbumId(), image.getFullSize(), this, this);
     }
 
-    private void downloadImage(int type) {
-        int NUMBER_OF_CORES = Runtime.getRuntime().availableProcessors();
-        ThreadPoolExecutor executor = new ThreadPoolExecutor(
-                NUMBER_OF_CORES * 2,
-                NUMBER_OF_CORES * 2,
-                60L,
-                TimeUnit.SECONDS,
-                new LinkedBlockingQueue<>()
-        );
-
-        AlbumsDatabase albumsDatabase = AlbumsDatabase.getInMemoryDatabase(this);
-        Album album = albumsDatabase.albumDao().findById(image.getAlbumId());
-        executor.execute(new LongThread(image.getPath(), album.getTitle(), new Handler(message -> {
-            if (dialog != null) {
-                dialog.dismiss();
-            }
-            image.setPath((String) message.obj);
-            ImagesDatabase imagesDatabase = ImagesDatabase.getInMemoryDatabase(this);
-            imagesDatabase.imageDAO().insert(image);
-            switch (type) {
-                case TYPE_DOWNLOAD:
-                    Toast.makeText(this, "Downloaded this wallpaper... You can find it at:" + image.getPath(), Toast.LENGTH_SHORT).show();
-                    break;
-                case TYPE_CROP:
-                    startCropperActivity(message.obj.toString());
-                    break;
-                case TYPE_SET_AS_WALLPAPER:
-                    showOptionBar();
-                    break;
-            }
-            return true;
-        })));
+    private void setClickEventOnFab() {
+        setAnimation(binding.crop, -250f, -200);
+        setAnimation(binding.download, -100f, -300);
+        setAnimation(binding.setAsWpp, 100f, -300);
+        setAnimation(binding.share, 250f, -200);
+        isFabClicked = !isFabClicked;
     }
 
     private void startCropperActivity(String s) {
@@ -250,12 +219,12 @@ public class WallpapersActivity extends AppCompatActivity implements View.OnClic
     }
 
     private void showOptionBar() {
-        findViewById(R.id.fullscreen_content_controls).setVisibility(View.VISIBLE);
+        binding.btnGroup.getRoot().setVisibility(View.VISIBLE);
         isShowingOptionBar = true;
     }
 
     private void hideOptionBar() {
-        findViewById(R.id.fullscreen_content_controls).setVisibility(View.GONE);
+        binding.btnGroup.getRoot().setVisibility(View.GONE);
         isShowingOptionBar = false;
     }
 
@@ -266,5 +235,26 @@ public class WallpapersActivity extends AppCompatActivity implements View.OnClic
         }else{
             super.onBackPressed();
         }
+    }
+
+    @Override
+    public void success(String path) {
+        Toast.makeText(this, "Downloaded!", Toast.LENGTH_SHORT).show();
+        image.setPath(path);
+        imageDAO.update(image);
+        switch (type) {
+            case TYPE_CROP:
+                startCropperActivity(path);
+                break;
+            case TYPE_SET_AS_WALLPAPER:
+                showOptionBar();
+                break;
+        }
+        type = -1;
+    }
+
+    @Override
+    public void failure() {
+        Toast.makeText(this, "Download failed", Toast.LENGTH_SHORT).show();
     }
 }

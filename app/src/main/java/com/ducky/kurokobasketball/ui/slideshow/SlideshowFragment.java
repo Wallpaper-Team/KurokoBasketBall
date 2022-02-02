@@ -69,14 +69,12 @@ public class SlideshowFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        slideshowViewModel.getAllImages().observe(Objects.requireNonNull(getActivity()), images -> adapter.setImages((ArrayList<Image>) images));
     }
 
     private void addItemTouchCallback(RecyclerView recyclerView) {
         ItemTouchHelper.Callback callback = new TouchHelperCallback(new ItemTouchListenner() {
             @Override
             public void onMove(int oldPosition, int newPosition) {
-                adapter.onMove(oldPosition, newPosition);
             }
 
             @Override
@@ -89,8 +87,6 @@ public class SlideshowFragment extends Fragment {
     }
 
     private void addImage(String path) {
-        Image image = new Image(-1, path, adapter.getItemCount());
-        adapter.addMoreImage(image);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
