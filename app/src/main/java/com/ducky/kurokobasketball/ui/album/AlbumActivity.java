@@ -2,6 +2,7 @@ package com.ducky.kurokobasketball.ui.album;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
@@ -121,9 +122,16 @@ public class AlbumActivity extends AppCompatActivity {
         binding.contentAlbum.viewWpps.addItemDecoration(new GridSpace(2, 20, false));
 
         viewModel = new ViewModelProvider(this).get(AlbumViewModel.class);
-        List<Image> images = viewModel.getImageList(album.getTitle());
-        adapter.setImages((ArrayList<Image>) images);
+        final List<Image>[] images = new List[]{viewModel.getImageList(album.getTitle())};
+        binding.emptyViews.setVisibility(!images[0].isEmpty() ? View.GONE : View.VISIBLE);
+        adapter.setImages((ArrayList<Image>) images[0]);
         binding.contentAlbum.viewWpps.setAdapter(adapter);
+        binding.contentAlbum.swipeRefresh.setOnRefreshListener(() -> {
+            images[0] = viewModel.getImageList(album.getTitle());
+            adapter.setImages((ArrayList<Image>) images[0]);
+            binding.emptyViews.setVisibility(!images[0].isEmpty() ? View.GONE : View.VISIBLE);
+            binding.contentAlbum.swipeRefresh.setRefreshing(false);
+        });
     }
 
     @Override

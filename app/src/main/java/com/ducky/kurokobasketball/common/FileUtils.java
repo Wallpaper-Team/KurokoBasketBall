@@ -154,20 +154,4 @@ public class FileUtils {
     public static boolean isMediaDocument(@NonNull Uri uri) {
         return "com.android.providers.media.documents".equals(uri.getAuthority());
     }
-
-    public static void deleteRecursive(@NonNull File fileOrDirectory) {
-        if (fileOrDirectory.isDirectory())
-            for (File child : fileOrDirectory.listFiles())
-                deleteRecursive(child);
-
-        Log.d(TAG, "deleteRecursive: " + fileOrDirectory.delete());
-    }
-
-    public static boolean isExist(String file) {
-        if (file == null) {
-            return false;
-        }
-        File f = new File(file);
-        return f != null && f.exists();
-    }
 }

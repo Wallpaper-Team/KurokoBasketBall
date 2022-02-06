@@ -19,6 +19,7 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
+        android:requestLegacyExternalStorage="true"
         android:theme="@style/MyNoActionBar"
         tools:ignore="GoogleAppIndexingWarning">
         <meta-data
@@ -36,7 +37,7 @@
         <activity
             android:name="com.ducky.kurokobasketball.ui.MainActivity"
             android:theme="@style/MyNoActionBar"
-            android:label="@string/title_activity_main">
+            android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -48,13 +49,6 @@
             android:name="com.ducky.kurokobasketball.service.ChangeWallPaperService"
             android:enabled="true"
             android:exported="true" />
-
-        <receiver android:name="com.ducky.kurokobasketball.network.MyReceiver">
-            <intent-filter>
-                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
-                <action android:name="android.net.wifi.WIFI_STATE_CHANGED" />
-            </intent-filter>
-        </receiver>
     </application>
 
 </manifest>
