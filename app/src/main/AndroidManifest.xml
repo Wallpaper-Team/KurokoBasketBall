@@ -21,6 +21,9 @@
         android:supportsRtl="true"
         android:theme="@style/MyNoActionBar"
         tools:ignore="GoogleAppIndexingWarning">
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-2089873880879307~4478182355"/>
         <activity android:name="com.ducky.kurokobasketball.ui.cropper.CropperActivity"/>
         <activity android:name=".ui.favorite.FavoriteActivity"
             android:label="@string/favorite_activity"/>

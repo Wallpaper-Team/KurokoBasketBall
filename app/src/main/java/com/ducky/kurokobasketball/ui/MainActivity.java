@@ -67,6 +67,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 case R.id.nav_share:
                     WindowUtils.shareApp(this);
                     break;
+                case R.id.nav_slideshow:
+                    startActivity(new Intent(this, FavoriteActivity.class));
+                    break;
                 case R.id.nav_rate:
                     WindowUtils.rateApp(this);
                     break;
