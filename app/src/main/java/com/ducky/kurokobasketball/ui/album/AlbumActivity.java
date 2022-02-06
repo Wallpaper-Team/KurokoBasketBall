@@ -77,10 +77,8 @@ public class AlbumActivity extends AppCompatActivity {
         binding.contentAlbum.viewWpps.addItemDecoration(new GridSpace(2, 20, false));
 
         viewModel = new ViewModelProvider(this).get(AlbumViewModel.class);
-        viewModel.getImageList(album.getTitle()).observe(this, images -> {
-            Log.d("duc.dv1", "initView: " + images.size());
-            adapter.setImages((ArrayList<Image>) images);
-        });
+        List<Image> images = viewModel.getImageList(album.getTitle());
+        adapter.setImages((ArrayList<Image>) images);
         binding.contentAlbum.viewWpps.setAdapter(adapter);
     }
 }

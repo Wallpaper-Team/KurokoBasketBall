@@ -32,7 +32,7 @@ public class AlbumViewModel extends ViewModel {
         mDatabase = FirebaseDatabase.getInstance().getReference();
     }
 
-    public LiveData<List<Image>> getImageList(String albumName) {
+    public List<Image> getImageList(String albumName) {
         fetchData(albumName);
         return imageDAO.getImageList(albumName);
     }

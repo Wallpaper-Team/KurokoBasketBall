@@ -2,6 +2,13 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <data>
+
+        <variable
+            name="image"
+            type="com.ducky.kurokobasketball.model.Image" />
+    </data>
+
     <FrameLayout xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -19,60 +26,37 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|center"
-            android:layout_margin="60dp"
+            android:layout_margin="@dimen/fab_margin"
             android:background="@color/colorPrimary"
             android:backgroundTint="@color/blue"
             android:src="@drawable/ic_wallpaper_black_24dp"
-            app:borderWidth="0dp"
-            app:fabSize="mini" />
+            android:visibility="gone"
+            app:borderWidth="0dp"/>
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/crop"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|center"
-            android:layout_margin="60dp"
+            android:layout_margin="@dimen/fab_margin"
             android:background="@color/colorPrimary"
             android:backgroundTint="@color/orange"
             android:src="@drawable/ic_crop_black_24dp"
-            app:borderWidth="0dp"
-            app:fabSize="mini" />
-
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/download"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|center"
-            android:layout_margin="60dp"
-            android:background="@color/colorPrimary"
-            android:backgroundTint="@color/red"
-            android:src="@drawable/ic_file_download_black_24dp"
-            app:borderWidth="0dp"
-            app:fabSize="mini" />
+            android:visibility="gone"
+            app:borderWidth="0dp"/>
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/share"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|center"
-            android:layout_margin="60dp"
+            android:layout_margin="@dimen/fab_margin"
             android:background="@color/colorPrimary"
             android:backgroundTint="@color/green"
             android:src="@drawable/ic_share_black_24dp"
-            app:borderWidth="0dp"
-            app:fabSize="mini" />
+            android:visibility="gone"
+            app:borderWidth="0dp" />
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fab"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|center"
-            android:layout_margin="60dp"
-            android:background="@color/colorPrimary"
-            android:backgroundTint="@color/colorPrimary"
-            android:src="@drawable/ic_wallpaper_black_24dp"
-            app:borderWidth="0dp"
-            app:fabSize="normal" />
         <include
             android:id="@+id/btnGroup"
             layout="@layout/content_set_as_wallpaper"

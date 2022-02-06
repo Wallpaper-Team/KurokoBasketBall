@@ -1,23 +1,22 @@
 package com.ducky.kurokobasketball.ui.cropper;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.preference.PreferenceManager;
-
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.edmodo.cropper.CropImageView;
-import com.ducky.kurokobasketball.BuildConfig;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.preference.PreferenceManager;
+
 import com.ducky.kurokobasketball.R;
 import com.ducky.kurokobasketball.utils.support.Constants;
 import com.ducky.kurokobasketball.utils.support.WindowUtils;
+import com.edmodo.cropper.CropImageView;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -139,19 +138,16 @@ public class CropperActivity extends AppCompatActivity implements View.OnClickLi
                 showOptionBar();
                 break;
             case R.id.home_option:
-                WindowUtils.setProgressDialog(this);
                 prefs.edit().putString(Constants.SET_WALLPAPER_OPTION, Constants.HOME_SCREEN).apply();
                 Bitmap croppedImage = cropImageView.getCroppedImage();
                 setWPP(croppedImage);
                 break;
             case R.id.lock_option:
-                WindowUtils.setProgressDialog(this);
                 prefs.edit().putString(Constants.SET_WALLPAPER_OPTION, Constants.LOCK_SCREEN).apply();
                 croppedImage = cropImageView.getCroppedImage();
                 setWPP(croppedImage);
                 break;
             case R.id.home_lock_option:
-                WindowUtils.setProgressDialog(this);
                 prefs.edit().putString(Constants.SET_WALLPAPER_OPTION, Constants.HOME_AND_LOCK_SCREEN).apply();
                 croppedImage = cropImageView.getCroppedImage();
                 setWPP(croppedImage);
@@ -163,50 +159,20 @@ public class CropperActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void setWPP(Bitmap croppedImage) {
-        File croppedPicture = createPictureFile("cropped.png");
-        assert croppedPicture != null;
-        String mDir = croppedPicture.getParent();
-        String mFileName = croppedPicture.getName();
-
-        File file = createFile(mDir, mFileName);
         try {
-            FileOutputStream fos = new FileOutputStream(file);
+            File outputDir = getCacheDir(); // context being the Activity pointer
+            File outputFile = File.createTempFile("croppedImage", ".png", outputDir);
+            FileOutputStream fos = new FileOutputStream(outputFile);
             croppedImage.compress(Bitmap.CompressFormat.PNG, 100, fos);
             fos.flush();
             fos.close();
-            WindowUtils.setWallPaperFitScreen(this, file.getPath());
+            WindowUtils.setWallPaperFitScreen(this, outputFile.getPath());
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e("duc.dv1", "setWPP: ", e.getCause());
+        } finally {
+            hideOptionBar();
+            finish();
         }
-    }
-
-    private File createFile(String dir, String name) {
-        File file = new File(dir, name);
-        File dirFile = file.getParentFile();
-        assert dirFile != null;
-        if (!dirFile.exists()) {
-            dirFile.mkdirs();
-        }
-        return file;
-    }
-
-    private File createPictureFile(String fileName) {
-        // To be safe, you should check that the SDCard is mounted
-        // using Environment.getExternalStorageState() before doing this.
-        if (!Environment.getExternalStorageState().equalsIgnoreCase(Environment.MEDIA_MOUNTED)) {
-            return null;
-        }
-
-        File picture = new File(Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_PICTURES) + File.separator + BuildConfig.APPLICATION_ID,
-                fileName);
-
-        File dirFile = picture.getParentFile();
-        if (!(dirFile != null && dirFile.exists())) {
-            dirFile.mkdirs();
-        }
-
-        return picture;
     }
 
     private void setTextColorBlack() {
@@ -230,7 +196,7 @@ public class CropperActivity extends AppCompatActivity implements View.OnClickLi
     public void onBackPressed() {
         if (isShowingOptionBar) {
             hideOptionBar();
-        }else{
+        } else {
             super.onBackPressed();
         }
     }

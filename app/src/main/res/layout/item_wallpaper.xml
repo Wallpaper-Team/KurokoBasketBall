@@ -17,7 +17,7 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <com.ducky.kurokobasketball.common.widget.SquareImageView
+            <com.ducky.kurokobasketball.common.widget.RectangleImageView
                 android:id="@+id/thumbnail"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"

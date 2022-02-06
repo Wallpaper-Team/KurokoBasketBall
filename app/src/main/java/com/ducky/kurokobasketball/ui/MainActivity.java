@@ -23,6 +23,7 @@ import androidx.navigation.ui.NavigationUI;
 import com.ducky.kurokobasketball.R;
 import com.ducky.kurokobasketball.databinding.ActivityMainBinding;
 import com.ducky.kurokobasketball.service.ChangeWallPaperService;
+import com.ducky.kurokobasketball.ui.favorite.FavoriteActivity;
 import com.ducky.kurokobasketball.utils.support.Constants;
 import com.ducky.kurokobasketball.utils.support.WindowUtils;
 
@@ -142,32 +143,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.home_option:
                 WindowUtils.setProgressDialog(this);
                 prefs.edit().putString(Constants.SET_WALLPAPER_OPTION, Constants.HOME_SCREEN).apply();
-                runAsForeGround();
                 break;
             case R.id.lock_option:
                 WindowUtils.setProgressDialog(this);
                 prefs.edit().putString(Constants.SET_WALLPAPER_OPTION, Constants.LOCK_SCREEN).apply();
-                runAsForeGround();
                 break;
             case R.id.home_lock_option:
                 WindowUtils.setProgressDialog(this);
                 prefs.edit().putString(Constants.SET_WALLPAPER_OPTION, Constants.HOME_AND_LOCK_SCREEN).apply();
-                runAsForeGround();
                 break;
             case R.id.back_option:
                 setVisibleControlPanel(false);
                 break;
             case R.id.fab:
                 checkOverlayPermission();
-                setVisibleControlPanel(true);
+                startActivity(new Intent(this, FavoriteActivity.class));
                 break;
         }
-    }
-
-    private void runAsForeGround() {
-        Intent intent = new Intent(this, ChangeWallPaperService.class);
-        intent.putExtra(Constants.CURRENTITEM, 0);
-        startService(intent);
-        setVisibleControlPanel(false);
     }
 }

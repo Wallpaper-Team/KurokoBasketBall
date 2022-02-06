@@ -1,20 +1,16 @@
-package com.ducky.kurokobasketball.ui.album;
+package com.ducky.kurokobasketball.ui.favorite;
 
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.ducky.kurokobasketball.R;
 import com.ducky.kurokobasketball.common.DownloadCallback;
-import com.ducky.kurokobasketball.common.Utils;
 import com.ducky.kurokobasketball.database.ImageDAO;
 import com.ducky.kurokobasketball.databinding.ItemWallpaperBinding;
 import com.ducky.kurokobasketball.model.Image;
@@ -28,13 +24,13 @@ import javax.inject.Inject;
 
 import dagger.hilt.android.qualifiers.ActivityContext;
 
-public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.ImageHolder> {
+public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.ImageHolder> {
     private ArrayList<Image> mImages;
     private Context mContext;
     private final ImageDAO imageDAO;
 
     @Inject
-    AlbumAdapter(@ActivityContext Context context, ImageDAO imageDAO) {
+    FavoriteAdapter(@ActivityContext Context context, ImageDAO imageDAO) {
         mContext = context;
         this.imageDAO = imageDAO;
     }
@@ -51,19 +47,7 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.ImageHolder>
     @Override
     public void onBindViewHolder(@NonNull ImageHolder holder, final int position) {
         final Image currentImage = mImages.get(position);
-        if (!TextUtils.isEmpty(currentImage.getPath())) {
-            currentImage.setDownloadState(State.DOWNLOADED);
-        }
         holder.imagesBinding.setImage(currentImage);
-        holder.imagesBinding.getRoot().setOnClickListener(v -> {
-            Log.d("duc.dv1", "onBindViewHolder: " + currentImage.getId());
-            Intent intent = new Intent(mContext, WallpapersActivity.class);
-            Bundle bundle = new Bundle();
-            bundle.putString(Constants.CURRENTITEM, currentImage.getId());
-            intent.putExtras(bundle);
-            intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-            mContext.startActivity(intent);
-        });
     }
 
     void setImages(ArrayList<Image> mImages) {
@@ -76,24 +60,12 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.ImageHolder>
         return mImages == null ? 0 : mImages.size();
     }
 
-    class ImageHolder extends RecyclerView.ViewHolder implements DownloadCallback {
+    class ImageHolder extends RecyclerView.ViewHolder {
         ItemWallpaperBinding imagesBinding;
 
         ImageHolder(@NonNull ItemWallpaperBinding itemImagesBinding) {
             super(itemImagesBinding.getRoot());
             imagesBinding = itemImagesBinding;
-        }
-
-        @Override
-        public void success(String path) {
-            Image image = imagesBinding.getImage();
-            image.setPath(path);
-            imageDAO.update(image);
-        }
-
-        @Override
-        public void failure() {
-            imagesBinding.getImage().setDownloadState(State.NORMAL);
         }
     }
 }

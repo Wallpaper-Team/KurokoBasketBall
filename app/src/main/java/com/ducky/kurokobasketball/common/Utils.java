@@ -31,7 +31,6 @@ public class Utils {
         IntentFilter filter = new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE);
         long id = downloadManager.enqueue(request);
         context.registerReceiver(new DownloadFileReceiver(downloadManager, callback, id), filter);
-        Toast.makeText(context, "Downloading image...", Toast.LENGTH_SHORT).show();
         return id;
     }
 

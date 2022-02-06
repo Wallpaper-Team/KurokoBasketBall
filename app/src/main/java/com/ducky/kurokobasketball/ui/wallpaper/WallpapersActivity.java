@@ -8,21 +8,16 @@ import android.os.Build;
 import android.os.Bundle;
 
 import com.ducky.kurokobasketball.common.DownloadCallback;
-import com.ducky.kurokobasketball.common.FileUtils;
 import com.ducky.kurokobasketball.common.Utils;
-import com.ducky.kurokobasketball.database.AlbumDAO;
 import com.ducky.kurokobasketball.database.ImageDAO;
 import com.ducky.kurokobasketball.databinding.ActivityWallpapersBinding;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.ducky.kurokobasketball.model.State;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelProviders;
 import androidx.preference.PreferenceManager;
 import androidx.viewpager.widget.ViewPager;
 
-import android.os.Environment;
-import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -30,16 +25,13 @@ import android.widget.Toast;
 
 import com.ducky.kurokobasketball.R;
 import com.ducky.kurokobasketball.common.ZoomOutPageTransformer;
-import com.ducky.kurokobasketball.model.Album;
 import com.ducky.kurokobasketball.model.Image;
 import com.ducky.kurokobasketball.ui.cropper.CropperActivity;
 import com.ducky.kurokobasketball.utils.support.Constants;
-import com.ducky.kurokobasketball.utils.thread.LongThread;
 import com.ducky.kurokobasketball.utils.support.WindowUtils;
 
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.lang.ref.WeakReference;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -80,21 +72,36 @@ public class WallpapersActivity extends AppCompatActivity implements View.OnClic
         viewModel = new ViewModelProvider(this).get(WallpaperViewModel.class);
         image = imageDAO.findImageByID(currentImage);
         assert image != null;
-        adapter = new WallpaperAdapter(getSupportFragmentManager());
+        binding.setImage(image);
+        List<Image> images = viewModel.getImages(image.getAlbumId());
+        adapter = new WallpaperAdapter(getSupportFragmentManager(), new WeakReference<>(this));
+        adapter.setImageList(images);
         binding.pager.setAdapter(adapter);
         binding.pager.setPageTransformer(false, new ZoomOutPageTransformer());
-        viewModel.getImages(image.getAlbumId()).observe(this, images -> {
-            adapter.setImageList(images);
-            for (int i = 0; i < images.size(); i++) {
-                if (images.get(i).getId().equalsIgnoreCase(image.getId())) {
-                    binding.pager.setCurrentItem(i,false);
-                    break;
-                }
+        for (int i = 0; i < images.size(); i++) {
+            if (images.get(i).getId().equalsIgnoreCase(image.getId())) {
+                binding.pager.setCurrentItem(i, false);
+                break;
+            }
+        }
+        binding.pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                image = adapter.getCurrentItem(binding.pager.getCurrentItem());
+                binding.setImage(image);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
             }
         });
         binding.crop.setOnClickListener(this);
-        binding.fab.setOnClickListener(this);
-        binding.download.setOnClickListener(this);
         binding.setAsWpp.setOnClickListener(this);
         binding.share.setOnClickListener(this);
         binding.btnGroup.homeOption.setOnClickListener(this);
@@ -115,6 +122,13 @@ public class WallpapersActivity extends AppCompatActivity implements View.OnClic
         if (isFabClicked) {
             valueX = 0f;
             valueY = 0f;
+            binding.crop.setVisibility(View.GONE);
+            binding.share.setVisibility(View.GONE);
+            binding.setAsWpp.setVisibility(View.GONE);
+        } else {
+            binding.crop.setVisibility(View.VISIBLE);
+            binding.share.setVisibility(View.VISIBLE);
+            binding.setAsWpp.setVisibility(View.VISIBLE);
         }
         PropertyValuesHolder pvhX = PropertyValuesHolder.ofFloat(TRANSLATION_X, valueX);
         PropertyValuesHolder pvhY = PropertyValuesHolder.ofFloat(TRANSLATION_Y, valueY);
@@ -138,7 +152,6 @@ public class WallpapersActivity extends AppCompatActivity implements View.OnClic
 
     @Override
     public void onClick(View view) {
-        image = adapter.getCurrentItem(binding.pager.getCurrentItem());
         switch (view.getId()) {
             case R.id.crop:
                 if (TextUtils.isEmpty(image.getPath())) {
@@ -157,23 +170,9 @@ public class WallpapersActivity extends AppCompatActivity implements View.OnClic
                 if (TextUtils.isEmpty(image.getPath())) {
                     type = TYPE_SET_AS_WALLPAPER;
                     downloadImage();
-                }else{
+                } else {
                     showOptionBar();
                 }
-                setClickEventOnFab();
-                break;
-            case R.id.download:
-                if (image != null) {
-                    if (TextUtils.isEmpty(image.getPath())) {
-                        type = TYPE_DOWNLOAD;
-                        downloadImage();
-                    } else {
-                        Toast.makeText(this, "Wallpaper was downloaded at " + image.getPath(), Toast.LENGTH_SHORT).show();
-                    }
-                }
-                setClickEventOnFab();
-                break;
-            case R.id.fab:
                 setClickEventOnFab();
                 break;
             case R.id.home_option:
@@ -199,15 +198,15 @@ public class WallpapersActivity extends AppCompatActivity implements View.OnClic
 
     private int type;
 
-    private void downloadImage() {
+    public void downloadImage() {
+        image.setDownloadState(State.DOWNLOADING);
         Utils.downloadThroughManager(image.getAlbumId(), image.getFullSize(), this, this);
     }
 
-    private void setClickEventOnFab() {
-        setAnimation(binding.crop, -250f, -200);
-        setAnimation(binding.download, -100f, -300);
-        setAnimation(binding.setAsWpp, 100f, -300);
-        setAnimation(binding.share, 250f, -200);
+    public void setClickEventOnFab() {
+        setAnimation(binding.crop, -200f, -200);
+        setAnimation(binding.setAsWpp, 0f, -300);
+        setAnimation(binding.share, 200f, -200);
         isFabClicked = !isFabClicked;
     }
 
@@ -232,15 +231,15 @@ public class WallpapersActivity extends AppCompatActivity implements View.OnClic
     public void onBackPressed() {
         if (isShowingOptionBar) {
             hideOptionBar();
-        }else{
+        } else {
             super.onBackPressed();
         }
     }
 
     @Override
     public void success(String path) {
-        Toast.makeText(this, "Downloaded!", Toast.LENGTH_SHORT).show();
         image.setPath(path);
+        image.setDownloadState(State.DOWNLOADED);
         imageDAO.update(image);
         switch (type) {
             case TYPE_CROP:
@@ -255,6 +254,7 @@ public class WallpapersActivity extends AppCompatActivity implements View.OnClic
 
     @Override
     public void failure() {
+        image.setDownloadState(State.NORMAL);
         Toast.makeText(this, "Download failed", Toast.LENGTH_SHORT).show();
     }
 }

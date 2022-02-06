@@ -95,4 +95,5 @@
     <string name="favorite_empty_message">Your favorite wallpaper is empty. Please tick favorite icon at top left corner of wallpaper!</string>
     <string name="message_download_dialog">"Need download your favorite wallpapers in this album if they are not exist. Do you want to continue?"</string>
     <string name="album_list_empty">This is empty! Try to refresh</string>
+    <string name="favorite_activity">Downloaded images</string>
 </resources>

@@ -1,5 +1,6 @@
 package com.ducky.kurokobasketball.model;
 
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -44,7 +45,7 @@ public class Image extends BaseObservable {
 
     public void setDownloadState(int downloadState) {
         this.downloadState = downloadState;
-        notifyPropertyChanged(BR.downloadState);
+        notifyChange();
     }
 
     public int getDownloadState() {
@@ -95,19 +96,21 @@ public class Image extends BaseObservable {
     }
 
     @BindingAdapter({"btnVisibility"})
-    public static void btnVisibility(View view, int downloadState) {
-        Log.d("duc", "btnVisibility: ");
+    public static void btnVisibility(View view, Image image) {
         int visibility = View.GONE;
+        if(!TextUtils.isEmpty(image.path)){
+            image.downloadState = State.DOWNLOADED;
+        }
         switch (view.getId()) {
-            /*case R.id.btnDownload:
-                visibility = downloadState == State.NORMAL ? View.VISIBLE : View.GONE;
+            case R.id.btnDownload:
+                visibility = image.downloadState == State.NORMAL ? View.VISIBLE : View.GONE;
                 break;
             case R.id.btnProgress:
-                visibility = downloadState == State.DOWNLOADING ? View.VISIBLE : View.GONE;
+                visibility = image.downloadState == State.DOWNLOADING ? View.VISIBLE : View.GONE;
                 break;
-            case R.id.btnDone:
-                visibility = downloadState == State.DOWNLOADED ? View.VISIBLE : View.GONE;
-                break;*/
+            case R.id.done:
+                visibility = image.downloadState == State.DOWNLOADED ? View.VISIBLE : View.GONE;
+                break;
         }
         view.setVisibility(visibility);
     }

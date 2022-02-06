@@ -15,18 +15,24 @@ import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 
 import com.ducky.kurokobasketball.R;
+import com.ducky.kurokobasketball.common.DownloadCallback;
+import com.ducky.kurokobasketball.common.Utils;
 import com.ducky.kurokobasketball.databinding.FragmentScreenSlidePageBinding;
 import com.ducky.kurokobasketball.model.Image;
+import com.ducky.kurokobasketball.model.State;
 
+import java.lang.ref.WeakReference;
 import java.util.Objects;
 
 public class ScreenSlidePageFragment extends Fragment {
 
     private Image image;
     private boolean isShown = false;
+    WeakReference<WallpapersActivity> activity;
 
-    ScreenSlidePageFragment(Image image) {
+    ScreenSlidePageFragment(WeakReference<WallpapersActivity> activity, Image image) {
         this.image = image;
+        this.activity = activity;
     }
 
     @Override
@@ -35,6 +41,8 @@ public class ScreenSlidePageFragment extends Fragment {
         FragmentScreenSlidePageBinding binding = FragmentScreenSlidePageBinding.inflate(
                 LayoutInflater.from(container.getContext()), container, false);
         binding.setImage(image);
+        binding.btnDownload.setOnClickListener(v -> activity.get().downloadImage());
+        binding.done.setOnClickListener(v -> activity.get().setClickEventOnFab());
         return binding.getRoot();
     }
 

@@ -32,7 +32,7 @@ public interface ImageDAO {
     void deleteImageByAlbumId(String albumID);
 
     @Query("SELECT * FROM image WHERE albumId LIKE :album")
-    LiveData<List<Image>> getImageList(String album);
+    List<Image> getImageList(String album);
 
     @Query("SELECT * FROM image WHERE albumId LIKE :albumName ORDER BY id DESC LIMIT 1")
     Image findLatestImageByID(String albumName);
@@ -43,6 +43,6 @@ public interface ImageDAO {
     @Query("DELETE FROM image WHERE id LIKE :id")
     void deleteImageById(String id);
 
-    @Query("SELECT * FROM image")
-    LiveData<Image> getImageListFavorite();
+    @Query("SELECT * FROM image WHERE path IS NOT NULL")
+    List<Image> getImageListFavorite();
 }

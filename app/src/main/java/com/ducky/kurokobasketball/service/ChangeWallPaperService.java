@@ -36,7 +36,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ducky.kurokobasketball.R;
-import com.ducky.kurokobasketball.model.Album;
+import com.ducky.kurokobasketball.database.ImageDAO;
 import com.ducky.kurokobasketball.model.Image;
 import com.ducky.kurokobasketball.model.State;
 import com.ducky.kurokobasketball.ui.MainActivity;
@@ -47,18 +47,25 @@ import com.ducky.kurokobasketball.utils.support.TimeUtil;
 import com.ducky.kurokobasketball.utils.support.WindowUtils;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import javax.inject.Inject;
 
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
 public class ChangeWallPaperService extends Service implements View.OnClickListener {
 
     private static final String TAG = "ChangeWallPaperService";
-    private static ArrayList<Image> images;
+    private static List<Image> images;
     private static int currentPosition;
     private AlarmManager alarmManager;
     private Intent intent;
     private PendingIntent pIntent;
     private NotificationCompat.Builder builder;
-    private static Album album;
+
+    @Inject
+    ImageDAO imageDAO;
 
     // The following are used for the shake detection
     private SensorManager mSensorManager;
@@ -79,10 +86,6 @@ public class ChangeWallPaperService extends Service implements View.OnClickListe
 
     public ChangeWallPaperService() {
         super();
-    }
-
-    public static Album getAlbum() {
-        return album;
     }
 
     @Override
@@ -147,6 +150,7 @@ public class ChangeWallPaperService extends Service implements View.OnClickListe
         assert action != null;
         switch (action) {
             case Constants.ACTION_START_FOREGROUND_SERVICE:
+                images = imageDAO.getImageListFavorite();
                 createNotificationChannel();
                 currentPosition = intent.getIntExtra(Constants.CURRENTITEM, 0);
                 setUpWallpaper();
@@ -181,22 +185,20 @@ public class ChangeWallPaperService extends Service implements View.OnClickListe
 
         Intent intentBackToScreen = new Intent(this, MainActivity.class);
         intentBackToScreen.putExtra(Constants.CURRENTITEM, currentPosition);
-            String albumName = album.getTitle();
-            String posPerTotal = getString(R.string.positionPerTotal, currentPosition + 1, images.size());
-            //Stop
-            intent = new Intent(this, this.getClass());
-            intent.setAction(Constants.ACTION_STOP_FOREGROUND_SERVICE);
-            pIntent = PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        //Stop
+        intent = new Intent(this, this.getClass());
+        intent.setAction(Constants.ACTION_STOP_FOREGROUND_SERVICE);
+        pIntent = PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-            //Next
-            Intent intentNext = new Intent(this, this.getClass());
-            intentNext.setAction(Constants.ACTION_NEXT);
-            PendingIntent pendingIntentNext = PendingIntent.getService(this, 0, intentNext, PendingIntent.FLAG_UPDATE_CURRENT);
+        //Next
+        Intent intentNext = new Intent(this, this.getClass());
+        intentNext.setAction(Constants.ACTION_NEXT);
+        PendingIntent pendingIntentNext = PendingIntent.getService(this, 0, intentNext, PendingIntent.FLAG_UPDATE_CURRENT);
 
-            //Previous
-            Intent intentPre = new Intent(this, this.getClass());
-            intentPre.setAction(Constants.ACTION_PREVIOUS);
-            PendingIntent pendingIntentPre = PendingIntent.getService(this, 0, intentPre, PendingIntent.FLAG_UPDATE_CURRENT);
+        //Previous
+        Intent intentPre = new Intent(this, this.getClass());
+        intentPre.setAction(Constants.ACTION_PREVIOUS);
+        PendingIntent pendingIntentPre = PendingIntent.getService(this, 0, intentPre, PendingIntent.FLAG_UPDATE_CURRENT);
 
     }
 
@@ -291,7 +293,6 @@ public class ChangeWallPaperService extends Service implements View.OnClickListe
         if (alarmManager != null)
             alarmManager.cancel(pIntent);
         images = null;
-        album = null;
         alarmManager = null;
         builder = null;
         if (mSensorManager != null)
@@ -326,7 +327,7 @@ public class ChangeWallPaperService extends Service implements View.OnClickListe
         contentOverlay = layoutOverlay.findViewById(R.id.content_overlay);
 
         contentOverlay.setVisibility(View.GONE);
-        btnHintOverlay.setOnTouchListener(new OnSwipeTouchListener(this){
+        btnHintOverlay.setOnTouchListener(new OnSwipeTouchListener(this) {
             @Override
             public void onSwipeRight() {
                 showOverlayView();
@@ -337,7 +338,7 @@ public class ChangeWallPaperService extends Service implements View.OnClickListe
                 showOverlayView();
             }
         });
-        contentOverlay.setOnTouchListener(new OnSwipeTouchListener(this){
+        contentOverlay.setOnTouchListener(new OnSwipeTouchListener(this) {
             @Override
             public void onSwipeLeft() {
                 hideOverlayView();

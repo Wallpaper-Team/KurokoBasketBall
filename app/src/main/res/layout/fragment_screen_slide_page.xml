@@ -13,6 +13,32 @@
             android:layout_height="match_parent"
             android:scaleType="centerInside"
             bind:coverImage="@{image.path??image.mediumSize}" />
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/fab_margin"
+            android:layout_gravity="bottom|center">
+
+            <ImageView
+                android:id="@+id/btnDownload"
+                android:layout_width="@dimen/btnSize"
+                android:layout_height="@dimen/btnSize"
+                android:src="@drawable/oval_download"
+                btnVisibility="@{image}" />
+
+            <ImageView
+                android:id="@+id/done"
+                android:layout_width="@dimen/btnSize"
+                android:layout_height="@dimen/btnSize"
+                android:src="@drawable/oval_done"
+                btnVisibility="@{image}" />
+
+            <ProgressBar
+                android:id="@+id/btnProgress"
+                android:layout_width="@dimen/btnSize"
+                android:layout_height="@dimen/btnSize"
+                btnVisibility="@{image}" />
+        </FrameLayout>
     </FrameLayout>
 
     <data>

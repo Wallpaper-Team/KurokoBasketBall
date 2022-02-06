@@ -1,6 +1,5 @@
-package com.ducky.kurokobasketball.ui.wallpaper;
+package com.ducky.kurokobasketball.ui.favorite;
 
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.ducky.kurokobasketball.database.ImageDAO;
@@ -13,16 +12,16 @@ import javax.inject.Inject;
 import dagger.hilt.android.lifecycle.HiltViewModel;
 
 @HiltViewModel
-public class WallpaperViewModel extends ViewModel {
+public class FavoriteViewModel extends ViewModel {
 
     private final ImageDAO imageDAO;
 
     @Inject
-    public WallpaperViewModel(ImageDAO imageDAO) {
+    public FavoriteViewModel(ImageDAO imageDAO) {
         this.imageDAO = imageDAO;
     }
 
-    public List<Image> getImages(String albumName) {
-        return imageDAO.getImageList(albumName);
+    public List<Image> getImageList() {
+        return imageDAO.getImageListFavorite();
     }
 }
